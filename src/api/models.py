@@ -17,7 +17,7 @@ class UserRole(db.Model):
 
 class UserRoleSchema(ma.Schema):
     class Meta:
-        fields = ("id", "role_name", "canceled")
+        fields = ("id", "role_name")
 
 
 user_role_schema = UserRoleSchema()
@@ -35,13 +35,22 @@ class User(db.Model):
     user_role = relationship(UserRole)
 
 
-class UserSchema(ma.Schema):
+class UserInputSchema(ma.Schema):
     class Meta:
-        fields = ("id", "username", "user_role_id", "canceled")
+        fields = ("id", "username", "user_role_id", "password", "salt")
 
 
-user_schema = UserSchema()
-users_schema = UserSchema(many=True)
+user_input_schema = UserInputSchema()
+user_inputs_schema = UserInputSchema(many=True)
+
+
+class UserOutputSchema(ma.Schema):
+    class Meta:
+        fields = ("id", "username", "user_role_id")
+
+
+user_output_schema = UserOutputSchema()
+user_outputs_schema = UserOutputSchema(many=True)
 
 
 class Event(db.Model):
@@ -73,7 +82,6 @@ class EventSchema(ma.Schema):
             "event_link",
             "create_user_id",
             "update_time",
-            "canceled",
         )
 
 
@@ -93,7 +101,7 @@ class EventRegistration(db.Model):
 
 class EventRegistrationSchema(ma.Schema):
     class Meta:
-        fields = ("id", "event_id", "user_id", "canceled")
+        fields = ("id", "event_id", "user_id")
 
 
 event_registration_schema = EventRegistrationSchema()
@@ -112,7 +120,7 @@ class EventFavorite(db.Model):
 
 class EventFavoriteSchema(ma.Schema):
     class Meta:
-        fields = ("id", "event_id", "user_id", "canceled")
+        fields = ("id", "event_id", "user_id")
 
 
 event_favorite_schema = EventFavoriteSchema()
