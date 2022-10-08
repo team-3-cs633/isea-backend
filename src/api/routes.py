@@ -47,7 +47,7 @@ def create_user_role():
         new_user_role = UserRole(**user_role)
         db.session.add(new_user_role)
         db.session.commit()
-        return user_schema.dump(new_user_role), 200, CONTENT_TYPE
+        return user_role_schema.dump(new_user_role), 200, CONTENT_TYPE
 
     except ValidationError:
         return (
@@ -217,12 +217,12 @@ def get_event_metrics(id: str):
         event = db.session.query(Event).filter(Event.id == id).one()
         registrations = (
             db.session.query(func.count(EventRegistration.id))
-            .filter(EventRegistration.event_id == id)
+            .filter_by(event_id=id, canceled=0)
             .scalar()
         )
         favorites = (
             db.session.query(func.count(EventFavorite.id))
-            .filter(EventFavorite.event_id == id)
+            .filter_by(event_id=id, canceled=0)
             .scalar()
         )
         shares = (
@@ -261,7 +261,7 @@ def event_registration():
             .filter_by(
                 user_id=registration["user_id"], event_id=registration["event_id"]
             )
-            .one()
+            .first()
         )
 
         if event_registration:
@@ -282,19 +282,6 @@ def event_registration():
         return (
             jsonify(BAD_REQUEST_ERROR),
             400,
-            CONTENT_TYPE,
-        )
-    except NoResultFound:
-        error = NOT_FOUND_ERROR["error"].format("Registration")
-        return (
-            jsonify(error),
-            404,
-            CONTENT_TYPE,
-        )
-    except MultipleResultsFound:
-        return (
-            jsonify(CRITICAL_ERROR),
-            500,
             CONTENT_TYPE,
         )
 
@@ -335,7 +322,7 @@ def event_favorite():
         event_favorite = (
             db.session.query(EventFavorite)
             .filter_by(user_id=favorite["user_id"], event_id=favorite["event_id"])
-            .one()
+            .first()
         )
 
         if event_favorite:
@@ -358,19 +345,6 @@ def event_favorite():
             400,
             CONTENT_TYPE,
         )
-    except NoResultFound:
-        error = NOT_FOUND_ERROR["error"].format("Favorite")
-        return (
-            jsonify(error),
-            404,
-            CONTENT_TYPE,
-        )
-    except MultipleResultsFound:
-        return (
-            jsonify(CRITICAL_ERROR),
-            500,
-            CONTENT_TYPE,
-        )
 
 
 @app.route("/events/<event_id>/favorite/<user_id>", methods=["POST"])
@@ -382,6 +356,7 @@ def remove_user_favorite(event_id: str, user_id: str):
             .one()
         )
         favorite.canceled = 1
+        db.session.commit()
         return event_favorite_schema.dump(favorite), 200, CONTENT_TYPE
     except NoResultFound:
         error = NOT_FOUND_ERROR["error"].format("Favorite")
