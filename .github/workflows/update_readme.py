@@ -23,6 +23,7 @@ def main(argv):
         except TypeError:
             sys.stdout.write("0")
             sys.exit(0)
+
         if coverage_number == 00:
             coverage = f"{100}%"
             color = "sucess"

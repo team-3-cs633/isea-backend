@@ -1,12 +1,10 @@
 import requests
 import json
-import os
 import uuid
 
 CONTENT_TYPE = "application/json"
-API_KEY = "1"
+API_KEY = "TBD"
 VALID_HEADERS = {"Content-Type": CONTENT_TYPE, "x-api-key": API_KEY}
-
 
 USER_ROLES_URL = "http://127.0.0.1:5555/users/roles"
 USERS_URL = "http://127.0.0.1:5555/users"
