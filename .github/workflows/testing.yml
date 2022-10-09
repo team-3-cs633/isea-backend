@@ -29,7 +29,7 @@ jobs:
         sudo apt install screen
     - name: Test with coverage and pytest
       run: |
-        screen -dm src/app.py
+        screen -dm ./src/app.py
         coverage run -m pytest;
         coverage report -i;
         coverage report -i >> test_report.txt;
