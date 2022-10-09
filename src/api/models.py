@@ -89,6 +89,23 @@ event_schema = EventSchema()
 events_schema = EventSchema(many=True)
 
 
+class EventUpdateFormSchema(ma.Schema):
+    class Meta:
+        fields = (
+            "user_id",
+            "description",
+            "category",
+            "location",
+            "cost",
+            "start_time",
+            "end_time",
+            "event_link",
+        )
+
+
+event_update_form_schema = EventUpdateFormSchema()
+
+
 class EventRegistration(db.Model):
     id = db.Column(db.String, primary_key=True, default=generate_id)
     event_id = db.Column(db.String, ForeignKey(Event.id), nullable=False)

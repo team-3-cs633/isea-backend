@@ -211,6 +211,37 @@ def get_event(id: str):
         )
 
 
+@app.route("/events/<id>", methods=["POST"])
+def update_event(id: str):
+    try:
+        update_request = event_update_form_schema.loads(json.dumps(request.json))
+        event = db.session.query(Event).filter(Event.id == id).one()
+
+        if event.create_user_id == update_request["user_id"]:
+            for attr, value in update_request.items():
+                if attr != "user_id":
+                    setattr(event, attr, value)
+
+            db.session.commit()
+        return event_schema.dump(event), 200, CONTENT_TYPE
+    except NoResultFound:
+        error = NOT_FOUND_ERROR["error"].format("Event")
+        return (jsonify(error), 404, CONTENT_TYPE)
+    except MultipleResultsFound:
+        return (
+            jsonify(CRITICAL_ERROR),
+            500,
+            CONTENT_TYPE,
+        )
+    except IntegrityError:
+        db.session.rollback()
+        return (
+            jsonify(BAD_REQUEST_ERROR),
+            400,
+            CONTENT_TYPE,
+        )
+
+
 @app.route("/events/<id>/metrics", methods=["GET"])
 def get_event_metrics(id: str):
     try:
