@@ -5,3 +5,4 @@ flask-marshmallow==0.14.0
 marshmallow-SQLAlchemy==0.28.1
 SQLAlchemy==1.3.23
 requests
+argon2-cffi==21.3.0
