@@ -140,7 +140,7 @@ def user_login():
         ph = PasswordHasher()
         user = user_input_schema.loads(json.dumps(request.json))
         login_user = (
-            db.session.query(User.id).filter_by(username=user["username"]).first()
+            db.session.query(User).filter_by(username=user["username"]).one_or_none()
         )
 
         if not login_user:

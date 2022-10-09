@@ -9,6 +9,7 @@ VALID_HEADERS = {"Content-Type": CONTENT_TYPE, "x-api-key": API_KEY}
 
 USER_ROLES_URL = "http://127.0.0.1:5555/users/roles"
 USERS_URL = "http://127.0.0.1:5555/users"
+USERS_LOGIN_URL = "http://127.0.0.1:5555/users/login"
 USER_ID_URL = "http://127.0.0.1:5555/users/{}"
 USER_FAVORITES_URL = "http://127.0.0.1:5555/users/{}/favorite"
 USER_REGISTRATIONS_URL = "http://127.0.0.1:5555/users/{}/registration"
@@ -58,6 +59,24 @@ def test_user_creation():
             "username": "Test Person",
             "password": "test",
             "user_role_id": USER_ROLE_UUID,
+        },
+        headers=VALID_HEADERS,
+    )
+    response_body = json.loads(request.text)
+
+    assert request.status_code == 200
+    assert len(response_body.keys()) == 3
+    assert response_body["user_role_id"] == USER_ROLE_UUID
+    assert response_body["id"] == USER_UUID
+    assert response_body["username"] == "Test Person"
+
+
+def test_user_login():
+    request = requests.post(
+        USERS_LOGIN_URL,
+        json={
+            "username": "Test Person",
+            "password": "test",
         },
         headers=VALID_HEADERS,
     )
