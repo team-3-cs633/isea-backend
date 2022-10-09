@@ -24,6 +24,7 @@ def main(argv):
             sys.stdout.write("0")
             sys.exit(0)
         if coverage_number == 00:
+            coverage = 100
             color = "sucess"
         elif coverage_number <=50:
             color = 'red'
