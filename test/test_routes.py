@@ -2,6 +2,7 @@ import requests
 import json
 import uuid
 
+
 CONTENT_TYPE = "application/json"
 API_KEY = "TBD"
 VALID_HEADERS = {"Content-Type": CONTENT_TYPE, "x-api-key": API_KEY}
@@ -56,7 +57,6 @@ def test_user_creation():
             "id": USER_UUID,
             "username": "Test Person",
             "password": "test",
-            "salt": "test",
             "user_role_id": USER_ROLE_UUID,
         },
         headers=VALID_HEADERS,

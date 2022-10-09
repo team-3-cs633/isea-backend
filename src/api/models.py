@@ -29,7 +29,6 @@ class User(db.Model):
     username = db.Column(db.String, unique=True, nullable=False)
     user_role_id = db.Column(db.String, ForeignKey(UserRole.id), nullable=False)
     password = db.Column(db.String, nullable=False)
-    salt = db.Column(db.String, nullable=False)
     canceled = db.Column(db.Integer, nullable=False, default=0)
 
     user_role = relationship(UserRole)
@@ -37,7 +36,7 @@ class User(db.Model):
 
 class UserInputSchema(ma.Schema):
     class Meta:
-        fields = ("id", "username", "user_role_id", "password", "salt")
+        fields = ("id", "username", "user_role_id", "password")
 
 
 user_input_schema = UserInputSchema()

@@ -1,11 +1,12 @@
-from flask import jsonify, request
 import json
+from flask import jsonify, request
 from api.models import *
 from api import app, local_environment, db
 from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from marshmallow import ValidationError
+from argon2 import PasswordHasher
 
 
 CONTENT_TYPE = {"ContentType": "application/json"}
@@ -13,6 +14,7 @@ BAD_REQUEST_ERROR = {"error": "Bad Request"}
 CRITICAL_ERROR = {"error": "Critical Error"}
 NOT_FOUND_ERROR = {"error": "{} Not Found"}
 ALREADY_EXISTS_ERROR = {"error": "{} Not Possible To Create"}
+LOGIN_ERROR = {"error": "Username or Password is invalid"}
 
 
 @app.route("/", methods=["GET"])
@@ -107,6 +109,10 @@ def create_user():
                 200,
                 CONTENT_TYPE,
             )
+
+        ph = PasswordHasher()
+        user["password"] = ph.hash(user["password"])
+
         new_user = User(**user)
         db.session.add(new_user)
         db.session.commit()
@@ -121,6 +127,30 @@ def create_user():
 
     except IntegrityError:
         db.session.rollback()
+        return (
+            jsonify(BAD_REQUEST_ERROR),
+            400,
+            CONTENT_TYPE,
+        )
+
+
+@app.route("/users/login", methods=["POST"])
+def user_login():
+    try:
+        ph = PasswordHasher()
+        user = user_input_schema.loads(json.dumps(request.json))
+        login_user = (
+            db.session.query(User.id).filter_by(username=user["username"]).first()
+        )
+
+        if not login_user:
+            ph.verify("VERIFY_NOTHING", user["password"])
+        elif login_user and ph.verify(login_user.password, user["password"]):
+            return user_output_schema.dump(login_user), 200, CONTENT_TYPE
+
+        return jsonify(LOGIN_ERROR), 200, CONTENT_TYPE
+
+    except ValidationError:
         return (
             jsonify(BAD_REQUEST_ERROR),
             400,
