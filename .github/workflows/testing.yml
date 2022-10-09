@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python 3.10
+    - name: Set up Python 3.8
       uses: actions/setup-python@v2
       with:
         python-version: "3.8"
@@ -24,11 +24,12 @@ jobs:
         python -m pip install --upgrade pip
         pip install flake8 pytest coverage
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Run App
+    - name: Install Screen
       run: |
-        python3 ./src/app.py
+        sudo apt install screen
     - name: Test with coverage and pytest
       run: |
+        screen -dm src/app.py
         coverage run -m pytest;
         coverage report -i;
         coverage report -i >> test_report.txt;
