@@ -23,8 +23,9 @@ def main(argv):
         except TypeError:
             sys.stdout.write("0")
             sys.exit(0)
-        
-        if coverage_number <=50:
+        if coverage_number == 00:
+            color = "sucess"
+        elif coverage_number <=50:
             color = 'red'
         elif 50 < coverage_number  <90:
             color = 'orange'
