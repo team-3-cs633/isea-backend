@@ -77,7 +77,7 @@ def create_user():
     if exists:
         error = ALREADY_EXISTS_ERROR["error"].format("User")
         return (
-            jsonify(error),
+            jsonify({"error": error}),
             200,
             CONTENT_TYPE,
         )
@@ -150,10 +150,11 @@ def create_event():
     if exists:
         error = ALREADY_EXISTS_ERROR["error"].format("Event")
         return (
-            jsonify(error),
+            jsonify({"error": error}),
             200,
             CONTENT_TYPE,
         )
+
     new_event = Event(**event)
     db.session.add(new_event)
     db.session.commit()
