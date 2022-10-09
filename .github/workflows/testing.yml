@@ -1,0 +1,47 @@
+
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: isea-backend-tests
+
+on:
+  push:
+    branches: '*'
+  pull_request:
+    branches: '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v2
+      with:
+        python-version: "3.8"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 pytest coverage
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Run App
+      run: |
+        python3 ./src/app.py
+    - name: Test with coverage and pytest
+      run: |
+        coverage run -m pytest;
+        coverage report -i;
+        coverage report -i >> test_report.txt;
+    - name: Create coverage.svg if required
+      if: github.event_name != 'pull_request'
+      run: |
+        coverage_percent=$( tail -c 4 test_report.txt);
+        export UPDATED=$(python3 ./.github/workflows/update_readme.py $coverage_percent);
+        rm -f test_report.txt;
+        if [ $UPDATED == "1" ]; then
+        git config user.name github-actions;
+        git config user.email github-actions@github.com;
+        git add . ;
+        git commit -m "updated coverage file";
+        git push;
+        fi;
