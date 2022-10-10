@@ -5,6 +5,26 @@
 # isea-backend
 The backend repository for isea
 
+## Local Setup
+
+1. `git clone git@github.com:team-3-cs633/isea-backend.git`
+2. `cd isea-backend`
+3. `python3 -m venv venv`
+4. `source ./venv/bin/activate`
+5. `pip install -r requirements.txt`
+6. `pip install pipenv black pytest`
+
+## Running  
+
+Run `python3 ./src/app.py`
+
+## Testing  
+
+Run `python3 -m pytest`
+
+## Formatting 
+
+Before creating a pull request run `pipenv run black .` to format the repository
 
 ## Table Diagram
 ![Table Diagram](table_diagram.png)
