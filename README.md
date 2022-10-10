@@ -5,7 +5,7 @@
 # isea-backend
 The backend repository for isea
 
-## Local Setup
+## Setup
 
 1. `git clone git@github.com:team-3-cs633/isea-backend.git`
 2. `cd isea-backend`
