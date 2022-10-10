@@ -42,10 +42,11 @@ def create_user_role():
     if exists:
         error = ALREADY_EXISTS_ERROR["error"].format("User Role")
         return (
-            jsonify(error),
+            jsonify({"error": error}),
             200,
             CONTENT_TYPE,
         )
+
     new_user_role = UserRole(**user_role)
     db.session.add(new_user_role)
     db.session.commit()
