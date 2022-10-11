@@ -20,12 +20,26 @@ def generate_id() -> str:
 
 
 class UserRole(db.Model):
+    """
+    Class that represents the user role table.
+
+	Attributes:
+		id: the primary key represented as a UUID
+		role_name: a unique name for the user role
+		canceled: 1 if canceled 0 if not
+    """
     id = db.Column(db.String, primary_key=True, default=generate_id)
     role_name = db.Column(db.String, unique=True, nullable=False)
     canceled = db.Column(db.Integer, nullable=False, default=0)
 
 
 class UserRoleSchema(ma.Schema):
+    """
+    Class that represents the user role schema.
+
+	Used for serialization and deserialization of objects
+	and for validating the data from requests
+    """
     class Meta:
         fields = ("id", "role_name")
 
@@ -35,6 +49,16 @@ user_roles_schema = UserRoleSchema(many=True)
 
 
 class User(db.Model):
+    """
+    Class that represents the user table.
+
+	Attributes:
+		id: the primary key represented as a UUID
+		username: a unique name for the user
+		user_role_id: the id of the role associated with the user
+		password: the hashed password of the user
+		canceled: 1 if canceled 0 if not
+    """
     id = db.Column(db.String, primary_key=True, default=generate_id)
     username = db.Column(db.String, unique=True, nullable=False)
     user_role_id = db.Column(db.String, ForeignKey(UserRole.id), nullable=False)
@@ -45,6 +69,12 @@ class User(db.Model):
 
 
 class UserInputSchema(ma.Schema):
+    """
+    Class that represents the user input schema.
+
+	Used for serialization and deserialization of objects
+	and for validating the data from user creation requests
+    """
     class Meta:
         fields = ("id", "username", "user_role_id", "password")
 
@@ -54,6 +84,12 @@ user_inputs_schema = UserInputSchema(many=True)
 
 
 class UserOutputSchema(ma.Schema):
+    """
+    Class that represents the user output schema.
+
+	Used specifying the data to return in a request 
+	associated with a user
+    """
     class Meta:
         fields = ("id", "username", "user_role_id")
 
@@ -63,6 +99,22 @@ user_outputs_schema = UserOutputSchema(many=True)
 
 
 class Event(db.Model):
+    """
+    Class that represents the user role table.
+
+	Attributes:
+		id: the primary key represented as a UUID
+		description: the event description, described what the event is about
+		category: the event category, used for filtering results
+		location: the specific location of the event
+		cost: the cost of the event
+		start_time: the start time and date of the event with the local timezone
+		end_time: the end time and date of the event with the local timezone
+		event_link: a url that links to more information about the event
+		create_user_id: the id of the user that created the event
+		update_time: the last time of update associated with the event row
+		canceled: 1 if canceled 0 if not
+    """
     id = db.Column(db.String, primary_key=True, default=generate_id)
     description = db.Column(db.String, nullable=False)
     category = db.Column(db.String, nullable=False)
@@ -79,6 +131,12 @@ class Event(db.Model):
 
 
 class EventSchema(ma.Schema):
+    """
+    Class that represents the event schema.
+
+	Used for serialization and deserialization of objects
+	and for validating the data from event requests
+    """
     class Meta:
         fields = (
             "id",
@@ -99,6 +157,12 @@ events_schema = EventSchema(many=True)
 
 
 class EventUpdateFormSchema(ma.Schema):
+    """
+    Class that represents the event update schema.
+
+	Used for serialization and deserialization of objects
+	and for validating the data from event update requests
+    """
     class Meta:
         fields = (
             "user_id",
@@ -116,6 +180,15 @@ event_update_form_schema = EventUpdateFormSchema()
 
 
 class EventRegistration(db.Model):
+    """
+    Class that represents the event registration table.
+
+	Attributes:
+		id: the primary key represented as a UUID
+		event_id: the id of the event the user is being registered to
+		user_id: the id of the user that is registering to the event
+		canceled: 1 if canceled 0 if not
+    """
     id = db.Column(db.String, primary_key=True, default=generate_id)
     event_id = db.Column(db.String, ForeignKey(Event.id), nullable=False)
     user_id = db.Column(db.String, ForeignKey(User.id), nullable=False)
@@ -126,6 +199,12 @@ class EventRegistration(db.Model):
 
 
 class EventRegistrationSchema(ma.Schema):
+    """
+    Class that represents the event registration schema.
+
+	Used for serialization and deserialization of objects
+	and for validating the data from event registration requests
+    """
     class Meta:
         fields = ("id", "event_id", "user_id")
 
@@ -135,6 +214,15 @@ event_registrations_schema = EventRegistrationSchema(many=True)
 
 
 class EventFavorite(db.Model):
+    """
+    Class that represents the event favorite table.
+
+	Attributes:
+		id: the primary key represented as a UUID
+		event_id: the id of the event the user is favoriting
+		user_id: the id of the user that is favoriting the event
+		canceled: 1 if canceled 0 if not
+    """
     id = db.Column(db.String, primary_key=True, default=generate_id)
     event_id = db.Column(db.String, ForeignKey(Event.id), nullable=False)
     user_id = db.Column(db.String, ForeignKey(User.id), nullable=False)
@@ -145,6 +233,12 @@ class EventFavorite(db.Model):
 
 
 class EventFavoriteSchema(ma.Schema):
+    """
+    Class that represents the event favorite schema.
+
+	Used for serialization and deserialization of objects
+	and for validating the data from event favorite requests
+    """
     class Meta:
         fields = ("id", "event_id", "user_id")
 
@@ -154,6 +248,13 @@ event_favorites_schema = EventFavoriteSchema(many=True)
 
 
 class EventShare(db.Model):
+    """
+    Class that represents the event share table.
+
+	Attributes:
+		id: the primary key represented as a UUID
+		event_id: the id of the event that was shared
+    """
     id = db.Column(db.String, primary_key=True, default=generate_id)
     event_id = db.Column(db.String, ForeignKey(Event.id), nullable=False)
 
@@ -161,6 +262,12 @@ class EventShare(db.Model):
 
 
 class EventShareSchema(ma.Schema):
+    """
+    Class that represents the event share schema.
+
+	Used for serialization and deserialization of objects
+	and for validating the data from event share requests
+    """
     class Meta:
         fields = ("id", "event_id")
 
