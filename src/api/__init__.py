@@ -1,8 +1,17 @@
+import secrets
+import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_marshmallow import Marshmallow
-import secrets
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
+
+USER_ROLE_UUID = os.getenv("USER_ROLE_UUID")
+ADMIN_ROLE_UUID = os.getenv("ADMIN_ROLE_UUID")
 
 
 local_environment = False

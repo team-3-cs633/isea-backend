@@ -9,6 +9,7 @@ from api.constants import (
     CONTENT_TYPE,
     BAD_REQUEST_ERROR,
 )
+from api import db
 
 
 def one_result(func):
@@ -60,7 +61,7 @@ def valid_result(func):
             result = func(*args, **kwargs)
             return result
 
-        except ValidationError:
+        except (ValidationError, KeyError):
             return (
                 jsonify(BAD_REQUEST_ERROR),
                 400,

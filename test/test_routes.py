@@ -1,6 +1,7 @@
 import requests
 import json
 import uuid
+from api import ADMIN_ROLE_UUID, USER_ROLE_UUID
 
 
 CONTENT_TYPE = "application/json"
@@ -23,7 +24,6 @@ EVENTS_FAVORITE_URL = "http://127.0.0.1:5555/events/favorite"
 EVENT_FAVORITE_REMOVAL_URL = "http://127.0.0.1:5555/events/{}/favorite/{}"
 EVENTS_SHARE_URL = "http://127.0.0.1:5555/events/share"
 
-USER_ROLE_UUID = str(uuid.uuid4())
 USER_UUID = str(uuid.uuid4())
 EVENT_UUID = str(uuid.uuid4())
 
@@ -31,7 +31,7 @@ EVENT_UUID = str(uuid.uuid4())
 def test_user_role_creation():
     request = requests.post(
         USER_ROLES_URL,
-        json={"id": USER_ROLE_UUID, "role_name": "Admin"},
+        json={"id": ADMIN_ROLE_UUID, "role_name": "Admin"},
         headers=VALID_HEADERS,
     )
     response_body = json.loads(request.text)
@@ -39,7 +39,7 @@ def test_user_role_creation():
     assert request.status_code == 200
     assert len(response_body.keys()) == 2
     assert response_body["role_name"] == "Admin"
-    assert response_body["id"] == USER_ROLE_UUID
+    assert response_body["id"] == ADMIN_ROLE_UUID
 
 
 def test_user_roles():
