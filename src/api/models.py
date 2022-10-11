@@ -24,9 +24,9 @@ class UserRole(db.Model):
     Class that represents the user role table.
 
 	Attributes:
-		id: the primary key represented as a UUID
-		role_name: a unique name for the user role
-		canceled: 1 if canceled 0 if not
+	    id: the primary key represented as a UUID
+	    role_name: a unique name for the user role
+	    canceled: 1 if canceled 0 if not
     """
     id = db.Column(db.String, primary_key=True, default=generate_id)
     role_name = db.Column(db.String, unique=True, nullable=False)
@@ -53,11 +53,11 @@ class User(db.Model):
     Class that represents the user table.
 
 	Attributes:
-		id: the primary key represented as a UUID
-		username: a unique name for the user
-		user_role_id: the id of the role associated with the user
-		password: the hashed password of the user
-		canceled: 1 if canceled 0 if not
+	    id: the primary key represented as a UUID
+	    username: a unique name for the user
+	    user_role_id: the id of the role associated with the user
+	    password: the hashed password of the user
+	    canceled: 1 if canceled 0 if not
     """
     id = db.Column(db.String, primary_key=True, default=generate_id)
     username = db.Column(db.String, unique=True, nullable=False)
@@ -103,17 +103,17 @@ class Event(db.Model):
     Class that represents the user role table.
 
 	Attributes:
-		id: the primary key represented as a UUID
-		description: the event description, described what the event is about
-		category: the event category, used for filtering results
-		location: the specific location of the event
-		cost: the cost of the event
-		start_time: the start time and date of the event with the local timezone
-		end_time: the end time and date of the event with the local timezone
-		event_link: a url that links to more information about the event
-		create_user_id: the id of the user that created the event
-		update_time: the last time of update associated with the event row
-		canceled: 1 if canceled 0 if not
+	    id: the primary key represented as a UUID
+	    description: the event description, described what the event is about
+	    category: the event category, used for filtering results
+	    location: the specific location of the event
+	    cost: the cost of the event
+	    start_time: the start time and date of the event with the local timezone
+	    end_time: the end time and date of the event with the local timezone
+	    event_link: a url that links to more information about the event
+	    create_user_id: the id of the user that created the event
+	    update_time: the last time of update associated with the event row
+	    canceled: 1 if canceled 0 if not
     """
     id = db.Column(db.String, primary_key=True, default=generate_id)
     description = db.Column(db.String, nullable=False)
@@ -184,10 +184,10 @@ class EventRegistration(db.Model):
     Class that represents the event registration table.
 
 	Attributes:
-		id: the primary key represented as a UUID
-		event_id: the id of the event the user is being registered to
-		user_id: the id of the user that is registering to the event
-		canceled: 1 if canceled 0 if not
+	    id: the primary key represented as a UUID
+	    event_id: the id of the event the user is being registered to
+	    user_id: the id of the user that is registering to the event
+	    canceled: 1 if canceled 0 if not
     """
     id = db.Column(db.String, primary_key=True, default=generate_id)
     event_id = db.Column(db.String, ForeignKey(Event.id), nullable=False)
@@ -218,10 +218,10 @@ class EventFavorite(db.Model):
     Class that represents the event favorite table.
 
 	Attributes:
-		id: the primary key represented as a UUID
-		event_id: the id of the event the user is favoriting
-		user_id: the id of the user that is favoriting the event
-		canceled: 1 if canceled 0 if not
+	    id: the primary key represented as a UUID
+	    event_id: the id of the event the user is favoriting
+	    user_id: the id of the user that is favoriting the event
+	    canceled: 1 if canceled 0 if not
     """
     id = db.Column(db.String, primary_key=True, default=generate_id)
     event_id = db.Column(db.String, ForeignKey(Event.id), nullable=False)
@@ -252,8 +252,8 @@ class EventShare(db.Model):
     Class that represents the event share table.
 
 	Attributes:
-		id: the primary key represented as a UUID
-		event_id: the id of the event that was shared
+	    id: the primary key represented as a UUID
+	    event_id: the id of the event that was shared
     """
     id = db.Column(db.String, primary_key=True, default=generate_id)
     event_id = db.Column(db.String, ForeignKey(Event.id), nullable=False)
