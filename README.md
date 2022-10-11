@@ -1,5 +1,5 @@
 ![isea tests](https://github.com/team-3-cs633/isea-backend/actions/workflows/testing.yml/badge.svg)
-![](https://img.shields.io/badge/coverage-100%25-sucess)
+![](https://img.shields.io/badge/coverage-75%25-orange)
 
 
 # isea-backend
@@ -51,3 +51,4 @@ Before creating a pull request run `pipenv run black .` to format the repository
 → **/events/favorite/{id} POST** : Remove a favorite    
 → **/events/share POST** : Share an event   
 → **/events/{id}/metrics GET** : Get an events metrics   
+
