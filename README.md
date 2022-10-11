@@ -1,5 +1,5 @@
 ![isea tests](https://github.com/team-3-cs633/isea-backend/actions/workflows/testing.yml/badge.svg)
-![](https://img.shields.io/badge/coverage-75%25-orange)
+![](https://img.shields.io/badge/coverage-74%25-orange)
 
 
 # isea-backend
