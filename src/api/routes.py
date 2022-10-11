@@ -1,4 +1,5 @@
 import json
+import uuid
 from flask import jsonify, request
 from api.models import *
 from api.decorators import one_result, valid_result
@@ -15,6 +16,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from marshmallow import ValidationError
 from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError
 
 
 @app.route("/", methods=["GET"])
@@ -151,17 +153,21 @@ def user_login():
         logged in user data, status code, content type
     """
     ph = PasswordHasher()
+    default = ph.hash(str(uuid.uuid4()))
+
     user = user_input_schema.loads(json.dumps(request.json))
     login_user = (
         db.session.query(User).filter_by(username=user["username"]).one_or_none()
     )
 
     if not login_user:
-        ph.verify("VERIFY_NOTHING", user["password"])
+        try:
+            ph.verify(default, user["password"])
+        except VerifyMismatchError:
+            return jsonify(LOGIN_ERROR), 400, CONTENT_TYPE
+
     elif login_user and ph.verify(login_user.password, user["password"]):
         return user_output_schema.dump(login_user), 200, CONTENT_TYPE
-
-    return jsonify(LOGIN_ERROR), 200, CONTENT_TYPE
 
 
 @app.route("/users/<id>/favorite", methods=["GET"])
