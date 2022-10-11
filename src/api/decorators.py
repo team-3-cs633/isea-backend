@@ -12,6 +12,13 @@ from api.constants import (
 
 
 def one_result(func):
+    """
+    Decorator for requests that require only one result.
+
+    This is a wrapper around route functions that need to
+    validate that only one result exists when executing a query
+    """
+
     @wraps(func)
     def call_inner(*args, **kwargs):
         try:
@@ -35,6 +42,18 @@ def one_result(func):
 
 
 def valid_result(func):
+    """
+    Decorator for requests that need to validate data.
+
+    This is a wrapper around route functions that need to
+    validate data of a request.
+
+    This data validation can be:
+    - A validation error caused when loading a particular marshmallow schema
+    - An integrity error caused by an issue with a database action
+    that requires a rollback
+    """
+
     @wraps(func)
     def call_inner(*args, **kwargs):
         try:

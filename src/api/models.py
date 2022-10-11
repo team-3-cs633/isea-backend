@@ -5,7 +5,17 @@ import uuid
 import re
 
 
-def generate_id():
+def generate_id() -> str:
+    """
+    Generate the id for the tables.
+    Create a UUID and remove the "-"
+
+    The UUID is used to prevent easy access to other user
+    data since we are not implementing significant user data controls
+
+    Returns:
+        str: a uuid with "-" removed
+    """
     return re.sub("-", "", str(uuid.uuid4()))
 
 
