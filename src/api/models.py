@@ -29,7 +29,7 @@ class UserRole(db.Model):
             canceled: 1 if canceled 0 if not
     """
 
-    id = db.Column(db.String, primary_key=True, default=USER_ROLE_UUID)
+    id = db.Column(db.String, primary_key=True, default=generate_id)
     role_name = db.Column(db.String, unique=True, nullable=False)
     canceled = db.Column(db.Integer, nullable=False, default=0)
 
