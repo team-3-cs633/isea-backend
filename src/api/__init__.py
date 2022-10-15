@@ -12,6 +12,7 @@ load_dotenv()
 
 USER_ROLE_UUID = os.getenv("USER_ROLE_UUID")
 ADMIN_ROLE_UUID = os.getenv("ADMIN_ROLE_UUID")
+COORDINATOR_ROLE_UUID = os.getenv("COORDINATOR_ROLE_UUID")
 
 
 local_environment = False

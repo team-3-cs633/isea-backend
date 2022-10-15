@@ -26,6 +26,7 @@ EVENTS_SHARE_URL = "http://127.0.0.1:5555/events/share"
 
 USER_UUID = str(uuid.uuid4())
 EVENT_UUID = str(uuid.uuid4())
+ADMIN_UUID = str(uuid.uuid4())
 
 
 def test_user_role_creation():
@@ -339,3 +340,77 @@ def test_remove_event_favorite():
 
     assert request.status_code == 200
     assert len(response_body) == 0
+
+
+def test_user_delete():
+    user_id = "23456"
+    requests.post(
+        USERS_URL,
+        json={
+            "id": user_id,
+            "username": "Test Delete",
+            "password": "test",
+            "user_role_id": USER_ROLE_UUID,
+        },
+        headers=VALID_HEADERS,
+    )
+
+    requests.post(
+        USERS_URL,
+        json={
+            "id": ADMIN_UUID,
+            "username": "Test Admin",
+            "password": "test",
+            "user_role_id": ADMIN_ROLE_UUID,
+        },
+        headers=VALID_HEADERS,
+    )
+
+    request = requests.delete(
+        USERS_URL,
+        json={
+            "user_id": user_id,
+            "requester_id": ADMIN_UUID,
+        },
+        headers=VALID_HEADERS,
+    )
+    response_body = json.loads(request.text)
+
+    assert request.status_code == 200
+    assert len(response_body.keys()) == 3
+    assert response_body["user_role_id"] == USER_ROLE_UUID
+    assert response_body["id"] == user_id
+    assert response_body["username"] == "Test Delete"
+
+    request = requests.get(
+        USERS_URL,
+        headers=VALID_HEADERS,
+    )
+    response_body = json.loads(request.text)
+
+    assert request.status_code == 200
+    assert len(response_body) == 2
+    assert response_body[0]["user_role_id"] == USER_ROLE_UUID
+    assert response_body[0]["id"] == USER_UUID
+    assert response_body[0]["username"] == "Test Person"
+    assert response_body[1]["user_role_id"] == ADMIN_ROLE_UUID
+    assert response_body[1]["id"] == ADMIN_UUID
+    assert response_body[1]["username"] == "Test Admin"
+
+
+def test_delete_event():
+    request = requests.delete(
+        EVENTS_URL,
+        json={
+            "event_id": EVENT_UUID,
+            "requester_id": ADMIN_UUID,
+        },
+        headers=VALID_HEADERS,
+    )
+    response_body = json.loads(request.text)
+
+    assert request.status_code == 200
+    assert len(response_body.keys()) == 10
+    assert response_body["create_user_id"] == USER_UUID
+    assert response_body["id"] == EVENT_UUID
+    assert response_body["description"] == "test event UPDATED"

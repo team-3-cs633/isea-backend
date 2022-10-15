@@ -33,6 +33,7 @@ Before creating a pull request run `pipenv run black .` to format the repository
 **Users**   
 → **/users GET** : Get all users    
 → **/users POST** : Create a user   
+→ **/users DELETE** : Delete a user   
 → **/users/{id} GET** : Get a user    
 → **/users/{id}/favorite GET** : Get a users favorite events    
 → **/users/{id}/registration GET** : Get a users event registrations    
@@ -43,6 +44,7 @@ Before creating a pull request run `pipenv run black .` to format the repository
 **Events**    
 → **/events GET** : Get all events    
 → **/events POST** : Create an event    
+→ **/events DELETE** : Delete an event   
 → **/events/{id} GET** : Get an event   
 → **/events/{id} POST** : Update an event   
 → **/events/registration POST** : Register to an event    
@@ -51,4 +53,3 @@ Before creating a pull request run `pipenv run black .` to format the repository
 → **/events/favorite/{id} POST** : Remove a favorite    
 → **/events/share POST** : Share an event   
 → **/events/{id}/metrics GET** : Get an events metrics   
-

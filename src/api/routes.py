@@ -10,7 +10,7 @@ from api.constants import (
     LOGIN_ERROR,
     BAD_REQUEST_ERROR,
 )
-from api import app, local_environment, db
+from api import app, local_environment, db, ADMIN_ROLE_UUID
 from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
@@ -138,6 +138,43 @@ def create_user():
     return user_output_schema.dump(new_user), 200, CONTENT_TYPE
 
 
+@app.route("/users", methods=["DELETE"])
+@valid_result
+def delete_user():
+    """
+    Delete a user.
+
+    The requester must be an ADMIN
+
+    payload: json {
+        "user_id": str,
+        "requester_id": str,
+    }
+
+    Returns:
+        the deleted user data, status code, content type
+    """
+
+    user = db.session.query(User).filter_by(id=request.json["user_id"]).one_or_none()
+
+    requester = (
+        db.session.query(User)
+        .filter_by(id=request.json["requester_id"], user_role_id=ADMIN_ROLE_UUID)
+        .one_or_none()
+    )
+
+    if user and requester:
+        user.canceled = 1
+        db.session.commit()
+        return user_output_schema.dump(user), 200, CONTENT_TYPE
+
+    return (
+        jsonify({"error": BAD_REQUEST_ERROR}),
+        400,
+        CONTENT_TYPE,
+    )
+
+
 @app.route("/users/login", methods=["POST"])
 @valid_result
 def user_login():
@@ -263,6 +300,47 @@ def create_event():
     db.session.add(new_event)
     db.session.commit()
     return event_schema.dump(new_event), 200, CONTENT_TYPE
+
+
+@app.route("/events", methods=["DELETE"])
+@valid_result
+def delete_event():
+    """
+    Delete an event.
+
+    The requester must either be the event creator or an ADMIN
+
+    payload: json {
+        "event_id": str,
+        "requester_id": str,
+    }
+
+    Returns:
+        the deleted event data, status code, content type
+    """
+
+    event = db.session.query(Event).filter_by(id=request.json["event_id"]).one_or_none()
+
+    if event and request.json["requester_id"] == event.create_user_id:
+        requester = True
+
+    else:
+        requester = (
+            db.session.query(User)
+            .filter_by(id=request.json["requester_id"], user_role_id=ADMIN_ROLE_UUID)
+            .one_or_none()
+        )
+
+    if event and requester:
+        event.canceled = 1
+        db.session.commit()
+        return event_schema.dump(event), 200, CONTENT_TYPE
+
+    return (
+        jsonify({"error": BAD_REQUEST_ERROR}),
+        400,
+        CONTENT_TYPE,
+    )
 
 
 @app.route("/events/<id>", methods=["GET"])
