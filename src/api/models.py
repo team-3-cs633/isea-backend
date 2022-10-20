@@ -183,6 +183,7 @@ class EventUpdateFormSchema(ma.Schema):
             "start_time",
             "end_time",
             "event_link",
+            "update_time",
         )
 
 
