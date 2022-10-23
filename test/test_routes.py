@@ -57,7 +57,7 @@ def test_user_creation():
         USERS_URL,
         json={
             "id": USER_UUID,
-            "username": "Test Person",
+            "username": "test person",
             "password": "test",
             "user_role_id": USER_ROLE_UUID,
         },
@@ -69,7 +69,7 @@ def test_user_creation():
     assert len(response_body.keys()) == 3
     assert response_body["user_role_id"] == USER_ROLE_UUID
     assert response_body["id"] == USER_UUID
-    assert response_body["username"] == "Test Person"
+    assert response_body["username"] == "test person"
 
 
 def test_user_login():
@@ -87,7 +87,7 @@ def test_user_login():
     assert len(response_body.keys()) == 3
     assert response_body["user_role_id"] == USER_ROLE_UUID
     assert response_body["id"] == USER_UUID
-    assert response_body["username"] == "Test Person"
+    assert response_body["username"] == "test person"
 
 
 def test_get_all_users():
@@ -101,7 +101,7 @@ def test_get_all_users():
     assert len(response_body) == 1
     assert response_body[0]["user_role_id"] == USER_ROLE_UUID
     assert response_body[0]["id"] == USER_UUID
-    assert response_body[0]["username"] == "Test Person"
+    assert response_body[0]["username"] == "test person"
 
 
 def test_get_single_user():
@@ -116,7 +116,7 @@ def test_get_single_user():
     assert len(response_body.keys()) == 3
     assert response_body["user_role_id"] == USER_ROLE_UUID
     assert response_body["id"] == USER_UUID
-    assert response_body["username"] == "Test Person"
+    assert response_body["username"] == "test person"
 
 
 def test_create_event():
@@ -348,7 +348,7 @@ def test_user_delete():
         USERS_URL,
         json={
             "id": user_id,
-            "username": "Test Delete",
+            "username": "test delete",
             "password": "test",
             "user_role_id": USER_ROLE_UUID,
         },
@@ -359,7 +359,7 @@ def test_user_delete():
         USERS_URL,
         json={
             "id": ADMIN_UUID,
-            "username": "Test Admin",
+            "username": "test admin",
             "password": "test",
             "user_role_id": ADMIN_ROLE_UUID,
         },
@@ -380,7 +380,7 @@ def test_user_delete():
     assert len(response_body.keys()) == 3
     assert response_body["user_role_id"] == USER_ROLE_UUID
     assert response_body["id"] == user_id
-    assert response_body["username"] == "Test Delete"
+    assert response_body["username"] == "test delete"
 
     request = requests.get(
         USERS_URL,
@@ -392,10 +392,10 @@ def test_user_delete():
     assert len(response_body) == 2
     assert response_body[0]["user_role_id"] == USER_ROLE_UUID
     assert response_body[0]["id"] == USER_UUID
-    assert response_body[0]["username"] == "Test Person"
+    assert response_body[0]["username"] == "test person"
     assert response_body[1]["user_role_id"] == ADMIN_ROLE_UUID
     assert response_body[1]["id"] == ADMIN_UUID
-    assert response_body[1]["username"] == "Test Admin"
+    assert response_body[1]["username"] == "test admin"
 
 
 def test_delete_event():

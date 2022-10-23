@@ -116,6 +116,8 @@ def create_user():
         created user data, status code, content type
     """
     user = user_input_schema.loads(json.dumps(request.json))
+    user["username"] = user["username"].lower()
+
     exists = (
         db.session.query(User.id).filter_by(username=user["username"]).first()
         is not None
@@ -193,6 +195,8 @@ def user_login():
     default = ph.hash(str(uuid.uuid4()))
 
     user = user_input_schema.loads(json.dumps(request.json))
+    user["username"] = user["username"].lower()
+
     login_user = (
         db.session.query(User).filter_by(username=user["username"]).one_or_none()
     )
@@ -203,8 +207,11 @@ def user_login():
         except VerifyMismatchError:
             return jsonify(LOGIN_ERROR), 400, CONTENT_TYPE
 
-    elif login_user and ph.verify(login_user.password, user["password"]):
+    try:
+        ph.verify(login_user.password, user["password"])
         return user_output_schema.dump(login_user), 200, CONTENT_TYPE
+    except VerifyMismatchError:
+        return jsonify(LOGIN_ERROR), 400, CONTENT_TYPE
 
 
 @app.route("/users/<id>/favorite", methods=["GET"])
