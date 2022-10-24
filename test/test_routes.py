@@ -269,14 +269,18 @@ def test_event_share():
         EVENTS_SHARE_URL,
         json={
             "event_id": EVENT_UUID,
+            "user_id": USER_UUID,
+            "to": "isea.sender@gmail.com",
         },
         headers=VALID_HEADERS,
     )
     response_body = json.loads(request.text)
 
     assert request.status_code == 200
-    assert len(response_body.keys()) == 2
+    assert len(response_body.keys()) == 4
     assert response_body["event_id"] == EVENT_UUID
+    assert response_body["user_id"] == USER_UUID
+    assert response_body["to"] == "isea.sender@gmail.com"
 
 
 def test_event_metrics():

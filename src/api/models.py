@@ -273,8 +273,11 @@ class EventShare(db.Model):
 
     id = db.Column(db.String, primary_key=True, default=generate_id)
     event_id = db.Column(db.String, ForeignKey(Event.id), nullable=False)
+    user_id = db.Column(db.String, ForeignKey(User.id), nullable=False)
+    to = db.Column(db.String, nullable=False)
 
     event = relationship(Event)
+    user = relationship(User)
 
 
 class EventShareSchema(ma.Schema):
@@ -286,7 +289,7 @@ class EventShareSchema(ma.Schema):
     """
 
     class Meta:
-        fields = ("id", "event_id")
+        fields = ("id", "event_id", "user_id", "to")
 
 
 event_share_schema = EventShareSchema()
