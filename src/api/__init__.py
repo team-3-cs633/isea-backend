@@ -10,9 +10,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+APPLICATION_URL = os.getenv("APPLICATION_URL")
 USER_ROLE_UUID = os.getenv("USER_ROLE_UUID")
 ADMIN_ROLE_UUID = os.getenv("ADMIN_ROLE_UUID")
 COORDINATOR_ROLE_UUID = os.getenv("COORDINATOR_ROLE_UUID")
+EMAIL_USERNAME = os.getenv("EMAIL_USERNAME")
+EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 
 
 local_environment = False

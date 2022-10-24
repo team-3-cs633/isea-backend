@@ -1,5 +1,8 @@
 import json
 import uuid
+import ssl
+import smtplib
+from email.message import EmailMessage
 from flask import jsonify, request
 from api.models import *
 from api.decorators import one_result, valid_result
@@ -10,7 +13,15 @@ from api.constants import (
     LOGIN_ERROR,
     BAD_REQUEST_ERROR,
 )
-from api import app, local_environment, db, ADMIN_ROLE_UUID
+from api import (
+    app,
+    local_environment,
+    db,
+    ADMIN_ROLE_UUID,
+    EMAIL_USERNAME,
+    EMAIL_PASSWORD,
+    APPLICATION_URL,
+)
 from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
@@ -116,6 +127,8 @@ def create_user():
         created user data, status code, content type
     """
     user = user_input_schema.loads(json.dumps(request.json))
+    user["username"] = user["username"].lower()
+
     exists = (
         db.session.query(User.id).filter_by(username=user["username"]).first()
         is not None
@@ -193,6 +206,8 @@ def user_login():
     default = ph.hash(str(uuid.uuid4()))
 
     user = user_input_schema.loads(json.dumps(request.json))
+    user["username"] = user["username"].lower()
+
     login_user = (
         db.session.query(User).filter_by(username=user["username"]).one_or_none()
     )
@@ -203,8 +218,11 @@ def user_login():
         except VerifyMismatchError:
             return jsonify(LOGIN_ERROR), 400, CONTENT_TYPE
 
-    elif login_user and ph.verify(login_user.password, user["password"]):
+    try:
+        ph.verify(login_user.password, user["password"])
         return user_output_schema.dump(login_user), 200, CONTENT_TYPE
+    except VerifyMismatchError:
+        return jsonify(LOGIN_ERROR), 400, CONTENT_TYPE
 
 
 @app.route("/users/<id>/favorite", methods=["GET"])
@@ -590,11 +608,53 @@ def event_share():
     """
     share = event_share_schema.loads(json.dumps(request.json))
     new_share = EventShare(**share)
-    db.session.add(new_share)
-    db.session.commit()
+
+    event = db.session.query(Event).filter(Event.id == new_share.event_id).one_or_none()
+    user = db.session.query(User).filter(User.id == new_share.user_id).one_or_none()
+
+    if user and event:
+        body = f"""
+        Hello {new_share.to}! \n
+        {user.username} thinks you might be interested in an event:
+        Event: {event.description}
+        Category: {event.category}
+        Location: {event.location}
+        Cost: {event.cost}\n
+
+        If you are interested, come to {APPLICATION_URL} and search for the event above.
+        We look forward to seeing you!
+
+        Kindly,
+        ISEA
+        """
+
+        email = EmailMessage()
+        email["From"] = EMAIL_USERNAME
+        email["To"] = new_share.to
+        email["Subject"] = "ISEA event you might be interested in!"
+        email.set_content(body)
+
+        sent = False
+
+        with smtplib.SMTP_SSL(
+            "smtp.gmail.com", port=465, context=ssl.create_default_context()
+        ) as smtp:
+            smtp.login(EMAIL_USERNAME, EMAIL_PASSWORD)
+            smtp.sendmail(EMAIL_USERNAME, new_share.to, email.as_string())
+            sent = True
+
+        if sent:
+            db.session.add(new_share)
+            db.session.commit()
+
+            return (
+                event_share_schema.dump(new_share),
+                200,
+                CONTENT_TYPE,
+            )
 
     return (
-        event_share_schema.dump(new_share),
-        200,
+        jsonify(BAD_REQUEST_ERROR),
+        400,
         CONTENT_TYPE,
     )
