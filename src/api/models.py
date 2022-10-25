@@ -98,7 +98,7 @@ class UserOutputSchema(ma.Schema):
     """
 
     class Meta:
-        fields = ("id", "username", "user_role_id")
+        fields = ("id", "username", "user_role_id", "role_name")
 
 
 user_output_schema = UserOutputSchema()

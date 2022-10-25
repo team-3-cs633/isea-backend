@@ -32,6 +32,11 @@ ADMIN_UUID = str(uuid.uuid4())
 def test_user_role_creation():
     request = requests.post(
         USER_ROLES_URL,
+        json={"id": USER_ROLE_UUID, "role_name": "User"},
+        headers=VALID_HEADERS,
+    )
+    request = requests.post(
+        USER_ROLES_URL,
         json={"id": ADMIN_ROLE_UUID, "role_name": "Admin"},
         headers=VALID_HEADERS,
     )
@@ -48,8 +53,9 @@ def test_user_roles():
     response_body = json.loads(request.text)
 
     assert request.status_code == 200
-    assert len(response_body) == 1
-    assert response_body[0]["role_name"] == "Admin"
+    assert len(response_body) == 2
+    assert response_body[0]["role_name"] == "User"
+    assert response_body[1]["role_name"] == "Admin"
 
 
 def test_user_creation():
