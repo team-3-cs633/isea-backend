@@ -24,7 +24,7 @@ jobs:
         touch ./src/api/.env;
         echo USER_ROLE_UUID=TEST_USER >> ./src/api/.env;
         echo ADMIN_ROLE_UUID=TEST_ADMIN >> ./src/api/.env;
-        echo APPLICATION_URL=TBD >> ./src/api/.env;
+        echo APPLICATION_URL=https://127.0.0.1:5555 >> ./src/api/.env;
         echo EMAIL_USERNAME=isea.sender@gmail.com >> ./src/api/.env
         echo EMAIL_PASSWORD=${{ secrets.EMAIL_PASSWORD }} >> ./src/api/.env
     - name: Install dependencies
