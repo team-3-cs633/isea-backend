@@ -18,7 +18,6 @@ EMAIL_USERNAME = os.getenv("EMAIL_USERNAME")
 EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 
 
-local_environment = False
 app = Flask(__name__)
 app.config["SECRET_KEY"] = secrets.token_urlsafe()
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data/data.db"

@@ -15,7 +15,6 @@ from api.constants import (
 )
 from api import (
     app,
-    local_environment,
     db,
     ADMIN_ROLE_UUID,
     EMAIL_USERNAME,

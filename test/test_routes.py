@@ -1,28 +1,28 @@
 import requests
 import json
 import uuid
-from api import ADMIN_ROLE_UUID, USER_ROLE_UUID
+from api import ADMIN_ROLE_UUID, USER_ROLE_UUID, APPLICATION_URL
 
 
 CONTENT_TYPE = "application/json"
 API_KEY = "TBD"
 VALID_HEADERS = {"Content-Type": CONTENT_TYPE, "x-api-key": API_KEY}
 
-USER_ROLES_URL = "http://127.0.0.1:5555/users/roles"
-USERS_URL = "http://127.0.0.1:5555/users"
-USERS_LOGIN_URL = "http://127.0.0.1:5555/users/login"
-USER_ID_URL = "http://127.0.0.1:5555/users/{}"
-USER_FAVORITES_URL = "http://127.0.0.1:5555/users/{}/favorite"
-USER_REGISTRATIONS_URL = "http://127.0.0.1:5555/users/{}/registration"
+USER_ROLES_URL = APPLICATION_URL + "/users/roles"
+USERS_URL = APPLICATION_URL + "/users"
+USERS_LOGIN_URL = APPLICATION_URL + "/users/login"
+USER_ID_URL = APPLICATION_URL + "/users/{}"
+USER_FAVORITES_URL = APPLICATION_URL + "/users/{}/favorite"
+USER_REGISTRATIONS_URL = APPLICATION_URL + "/users/{}/registration"
 
-EVENTS_URL = "http://127.0.0.1:5555/events"
-EVENT_ID_URL = "http://127.0.0.1:5555/events/{}"
-EVENT_METRICS_URL = "http://127.0.0.1:5555/events/{}/metrics"
-EVENTS_REGISTRATION_URL = "http://127.0.0.1:5555/events/registration"
-EVENT_REGISTRATION_REMOVAL_URL = "http://127.0.0.1:5555/events/{}/registration/{}"
-EVENTS_FAVORITE_URL = "http://127.0.0.1:5555/events/favorite"
-EVENT_FAVORITE_REMOVAL_URL = "http://127.0.0.1:5555/events/{}/favorite/{}"
-EVENTS_SHARE_URL = "http://127.0.0.1:5555/events/share"
+EVENTS_URL = APPLICATION_URL + "/events"
+EVENT_ID_URL = APPLICATION_URL + "/events/{}"
+EVENT_METRICS_URL = APPLICATION_URL + "/events/{}/metrics"
+EVENTS_REGISTRATION_URL = APPLICATION_URL + "/events/registration"
+EVENT_REGISTRATION_REMOVAL_URL = APPLICATION_URL + "/events/{}/registration/{}"
+EVENTS_FAVORITE_URL = APPLICATION_URL + "/events/favorite"
+EVENT_FAVORITE_REMOVAL_URL = APPLICATION_URL + "/events/{}/favorite/{}"
+EVENTS_SHARE_URL = APPLICATION_URL + "/events/share"
 
 USER_UUID = str(uuid.uuid4())
 EVENT_UUID = str(uuid.uuid4())
@@ -34,11 +34,13 @@ def test_user_role_creation():
         USER_ROLES_URL,
         json={"id": USER_ROLE_UUID, "role_name": "User"},
         headers=VALID_HEADERS,
+        verify=False,
     )
     request = requests.post(
         USER_ROLES_URL,
         json={"id": ADMIN_ROLE_UUID, "role_name": "Admin"},
         headers=VALID_HEADERS,
+        verify=False,
     )
     response_body = json.loads(request.text)
 
@@ -49,7 +51,7 @@ def test_user_role_creation():
 
 
 def test_user_roles():
-    request = requests.get(USER_ROLES_URL, headers=VALID_HEADERS)
+    request = requests.get(USER_ROLES_URL, headers=VALID_HEADERS, verify=False)
     response_body = json.loads(request.text)
 
     assert request.status_code == 200
@@ -68,6 +70,7 @@ def test_user_creation():
             "user_role_id": USER_ROLE_UUID,
         },
         headers=VALID_HEADERS,
+        verify=False,
     )
     response_body = json.loads(request.text)
 
@@ -86,6 +89,7 @@ def test_user_login():
             "password": "test",
         },
         headers=VALID_HEADERS,
+        verify=False,
     )
     response_body = json.loads(request.text)
 
@@ -100,6 +104,7 @@ def test_get_all_users():
     request = requests.get(
         USERS_URL,
         headers=VALID_HEADERS,
+        verify=False,
     )
     response_body = json.loads(request.text)
 
@@ -115,6 +120,7 @@ def test_get_single_user():
     request = requests.get(
         URL,
         headers=VALID_HEADERS,
+        verify=False,
     )
     response_body = json.loads(request.text)
 
@@ -141,6 +147,7 @@ def test_create_event():
             "update_time": "now",
         },
         headers=VALID_HEADERS,
+        verify=False,
     )
     response_body = json.loads(request.text)
 
@@ -155,6 +162,7 @@ def test_get_events():
     request = requests.get(
         EVENTS_URL,
         headers=VALID_HEADERS,
+        verify=False,
     )
     response_body = json.loads(request.text)
 
@@ -171,6 +179,7 @@ def test_get_single_event():
     request = requests.get(
         URL,
         headers=VALID_HEADERS,
+        verify=False,
     )
     response_body = json.loads(request.text)
 
@@ -196,6 +205,7 @@ def test_update_single_event():
             "event_link": "some url",
         },
         headers=VALID_HEADERS,
+        verify=False,
     )
     response_body = json.loads(request.text)
 
@@ -214,6 +224,7 @@ def test_event_registration():
             "event_id": EVENT_UUID,
         },
         headers=VALID_HEADERS,
+        verify=False,
     )
     response_body = json.loads(request.text)
 
@@ -231,6 +242,7 @@ def test_event_favorite():
             "event_id": EVENT_UUID,
         },
         headers=VALID_HEADERS,
+        verify=False,
     )
     response_body = json.loads(request.text)
 
@@ -245,6 +257,7 @@ def test_user_registrations():
     request = requests.get(
         URL,
         headers=VALID_HEADERS,
+        verify=False,
     )
     response_body = json.loads(request.text)
 
@@ -260,6 +273,7 @@ def test_user_favorites():
     request = requests.get(
         URL,
         headers=VALID_HEADERS,
+        verify=False,
     )
     response_body = json.loads(request.text)
 
@@ -279,6 +293,7 @@ def test_event_share():
             "to": "isea.sender@gmail.com",
         },
         headers=VALID_HEADERS,
+        verify=False,
     )
     response_body = json.loads(request.text)
 
@@ -294,6 +309,7 @@ def test_event_metrics():
     request = requests.get(
         URL,
         headers=VALID_HEADERS,
+        verify=False,
     )
     response_body = json.loads(request.text)
 
@@ -309,6 +325,7 @@ def test_remove_event_registration():
     request = requests.post(
         URL,
         headers=VALID_HEADERS,
+        verify=False,
     )
     response_body = json.loads(request.text)
 
@@ -321,6 +338,7 @@ def test_remove_event_registration():
     request = requests.get(
         URL,
         headers=VALID_HEADERS,
+        verify=False,
     )
     response_body = json.loads(request.text)
 
@@ -333,6 +351,7 @@ def test_remove_event_favorite():
     request = requests.post(
         URL,
         headers=VALID_HEADERS,
+        verify=False,
     )
     response_body = json.loads(request.text)
 
@@ -345,6 +364,7 @@ def test_remove_event_favorite():
     request = requests.get(
         URL,
         headers=VALID_HEADERS,
+        verify=False,
     )
     response_body = json.loads(request.text)
 
@@ -363,6 +383,7 @@ def test_user_delete():
             "user_role_id": USER_ROLE_UUID,
         },
         headers=VALID_HEADERS,
+        verify=False,
     )
 
     requests.post(
@@ -374,6 +395,7 @@ def test_user_delete():
             "user_role_id": ADMIN_ROLE_UUID,
         },
         headers=VALID_HEADERS,
+        verify=False,
     )
 
     request = requests.delete(
@@ -383,6 +405,7 @@ def test_user_delete():
             "requester_id": ADMIN_UUID,
         },
         headers=VALID_HEADERS,
+        verify=False,
     )
     response_body = json.loads(request.text)
 
@@ -395,6 +418,7 @@ def test_user_delete():
     request = requests.get(
         USERS_URL,
         headers=VALID_HEADERS,
+        verify=False,
     )
     response_body = json.loads(request.text)
 
@@ -416,6 +440,7 @@ def test_delete_event():
             "requester_id": ADMIN_UUID,
         },
         headers=VALID_HEADERS,
+        verify=False,
     )
     response_body = json.loads(request.text)
 
