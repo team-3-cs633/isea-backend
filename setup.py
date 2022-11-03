@@ -11,9 +11,10 @@ load_dotenv("./src/api/.env")
 CONTENT_TYPE = "application/json"
 API_KEY = "TBD"
 VALID_HEADERS = {"Content-Type": CONTENT_TYPE, "x-api-key": API_KEY}
-USER_ROLES_URL = "http://127.0.0.1:5555/users/roles"
-USERS_URL = "http://127.0.0.1:5555/users"
-EVENTS_URL = "http://127.0.0.1:5555/events"
+APPLICATION_URL = os.getenv("APPLICATION_URL")
+USER_ROLES_URL = APPLICATION_URL + "/users/roles"
+USERS_URL = APPLICATION_URL + "/users"
+EVENTS_URL = APPLICATION_URL + "/events"
 USER_ROLE_UUID = os.getenv("USER_ROLE_UUID")
 ADMIN_ROLE_UUID = os.getenv("ADMIN_ROLE_UUID")
 COORDINATOR_ROLE_UUID = os.getenv("COORDINATOR_ROLE_UUID")
@@ -36,6 +37,7 @@ def load_user_roles():
         USER_ROLES_URL,
         json={"id": ADMIN_ROLE_UUID, "role_name": "Admin"},
         headers=VALID_HEADERS,
+        verify=False,
     )
 
     # Create Coordinator
@@ -43,6 +45,7 @@ def load_user_roles():
         USER_ROLES_URL,
         json={"id": COORDINATOR_ROLE_UUID, "role_name": "Event Coordinator"},
         headers=VALID_HEADERS,
+        verify=False,
     )
 
     # Create Users
@@ -50,6 +53,7 @@ def load_user_roles():
         USER_ROLES_URL,
         json={"id": USER_ROLE_UUID, "role_name": "User"},
         headers=VALID_HEADERS,
+        verify=False,
     )
 
 
@@ -69,6 +73,7 @@ def load_default_users():
             "user_role_id": ADMIN_ROLE_UUID,
         },
         headers=VALID_HEADERS,
+        verify=False,
     )
 
     # Create Coordinator
@@ -80,6 +85,7 @@ def load_default_users():
             "user_role_id": COORDINATOR_ROLE_UUID,
         },
         headers=VALID_HEADERS,
+        verify=False,
     )
 
 
