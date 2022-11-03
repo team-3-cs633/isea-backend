@@ -30,7 +30,7 @@ jobs:
     - name: create fake certs for testing
       run: |
         mkdir .certs
-        openssl req -x509 -newkey rsa:4096 -keyout ./.certs/key.pem -out ./.certs/cert.pem -sha256 -days 365 -passin pass:password
+        openssl req -nodes -x509 -newkey -keyout ./.certs/key.pem -out ./.certs/cert.pem
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
