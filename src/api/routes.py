@@ -91,8 +91,26 @@ def get_users():
     Returns:
         a list of user data, status code, content type
     """
-    users = db.session.query(User).filter(User.canceled == 0).all()
-    return user_outputs_schema.dump(users), 200, CONTENT_TYPE
+    users = (
+        db.session.query(User)
+        .join(UserRole, User.user_role_id == UserRole.id)
+        .add_entity(UserRole)
+        .filter(User.canceled == 0)
+        .all()
+    )
+    user_data = []
+
+    for user in users:
+        user_data.append(
+            {
+                "id": user[0].id,
+                "username": user[0].username,
+                "user_role_id": user[0].user_role_id,
+                "role_name": user[1].role_name,
+            }
+        )
+
+    return user_outputs_schema.dump(user_data), 200, CONTENT_TYPE
 
 
 @app.route("/users/<id>", methods=["GET"])
