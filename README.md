@@ -27,7 +27,7 @@ Run `python3 -m pytest`
 Before creating a pull request run `pipenv run black .` to format the repository
 
 ## Table Diagram
-![Table Diagram](table_diagram.png)
+![Table Diagram](./img/table_diagram.png)
 
 ## Endpoints
 **Users**   
