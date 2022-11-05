@@ -21,7 +21,7 @@ from api import (
     EMAIL_PASSWORD,
     APPLICATION_URL,
 )
-from sqlalchemy import func
+from sqlalchemy import func, and_
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from marshmallow import ValidationError
@@ -267,7 +267,7 @@ def get_user_registration(id: str):
     Get the registered events of the specified user.
 
     Args:
-        id: the id of the user to get the favorites of
+        id: the id of the user to get the registrations of
 
     Returns:
         a list of event data, status code, content type
@@ -279,6 +279,55 @@ def get_user_registration(id: str):
     )
     registrations = [result[0] for result in registration]
     events = db.session.query(Event).filter(Event.id.in_(registrations)).all()
+    return events_schema.dump(events), 200, CONTENT_TYPE
+
+
+@app.route("/users/<id>/suggestion", methods=["GET"])
+def get_user_suggestions(id: str):
+    """
+    Get the suggested events of the specified user.
+
+    Args:
+        id: the id of the user to get the favorites of
+
+    Returns:
+        a list of event data, status code, content type
+    """
+
+    # Get registered events
+    registration = (
+        db.session.query(EventRegistration.event_id)
+        .filter_by(user_id=id, canceled=0)
+        .all()
+    )
+    registrations = [result[0] for result in registration]
+    registered_events = (
+        db.session.query(Event).filter(Event.id.in_(registrations)).all()
+    )
+
+    # Get favorite events
+    favorite = (
+        db.session.query(EventFavorite.event_id).filter_by(user_id=id, canceled=0).all()
+    )
+    favorites = [result[0] for result in favorite]
+    favorite_events = db.session.query(Event).filter(Event.id.in_(favorites)).all()
+
+    # Setup query data
+    # Get all current categories
+    all_events = registered_events + favorite_events
+    categories = [event.category for event in all_events]
+
+    # Get Ids to ignore
+    # events the user already knows about should not be suggested to them
+    ids_to_ignore = registrations + favorites
+
+    # Get Suggested Events
+    events = (
+        db.session.query(Event)
+        .filter(and_(Event.id.notin_(ids_to_ignore), Event.category.in_(categories)))
+        .all()
+    )
+
     return events_schema.dump(events), 200, CONTENT_TYPE
 
 
