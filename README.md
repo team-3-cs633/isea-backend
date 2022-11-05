@@ -37,6 +37,7 @@ Before creating a pull request run `pipenv run black .` to format the repository
 → **/users/{id} GET** : Get a user    
 → **/users/{id}/favorite GET** : Get a users favorite events    
 → **/users/{id}/registration GET** : Get a users event registrations    
+→ **/users/{id}/suggestion GET** : Get a users event suggestions   
 → **/users/login POST** : Login a user    
 → **/users/roles GET** : Get user roles   
 → **/users/roles POST** : Create a user role    
