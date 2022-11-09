@@ -226,7 +226,7 @@ def user_login():
     user["username"] = user["username"].lower()
 
     login_user = (
-        db.session.query(User).filter_by(username=user["username"]).one_or_none()
+        db.session.query(User).filter_by(username=user["username"], canceled=0).one_or_none()
     )
 
     if not login_user:
@@ -340,7 +340,8 @@ def get_events():
         a list of event data, status code, content type
     """
     events = db.session.query(Event).filter(Event.canceled == 0).all()
-    return events_schema.dump(events), 200, CONTENT_TYPE
+    sorted_events = sorted(events, key=lambda event: event.start_time)
+    return events_schema.dump(sorted_events), 200, CONTENT_TYPE
 
 
 @app.route("/events", methods=["POST"])
