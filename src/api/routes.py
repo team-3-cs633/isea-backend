@@ -2,6 +2,7 @@ import json
 import uuid
 import ssl
 import smtplib
+import urllib.parse
 from email.message import EmailMessage
 from flask import jsonify, request
 from api.models import *
@@ -688,7 +689,7 @@ def event_share():
         Location: {event.location}
         Cost: {event.cost}\n
 
-        If you are interested, come to {APPLICATION_URL} and search for the event above.
+        If you are interested, come to {urllib.parse.parseurl(APPLICATION_URL).netloc} and search for the event above.
         We look forward to seeing you!
 
         Kindly,
