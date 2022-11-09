@@ -689,7 +689,7 @@ def event_share():
         Location: {event.location}
         Cost: {event.cost}\n
 
-        If you are interested, come to {urllib.parse.parseurl(APPLICATION_URL).netloc} and search for the event above.
+        If you are interested, come to {urllib.parse.urlparse(APPLICATION_URL).netloc} and search for the event above.
         We look forward to seeing you!
 
         Kindly,
