@@ -14,6 +14,7 @@ USERS_LOGIN_URL = APPLICATION_URL + "/users/login"
 USER_ID_URL = APPLICATION_URL + "/users/{}"
 USER_FAVORITES_URL = APPLICATION_URL + "/users/{}/favorite"
 USER_REGISTRATIONS_URL = APPLICATION_URL + "/users/{}/registration"
+USER_SUGGESTIONS_URL = APPLICATION_URL + "/users/{}/suggestion"
 
 EVENTS_URL = APPLICATION_URL + "/events"
 EVENT_ID_URL = APPLICATION_URL + "/events/{}"
@@ -282,6 +283,19 @@ def test_user_favorites():
     assert response_body[0]["create_user_id"] == USER_UUID
     assert response_body[0]["id"] == EVENT_UUID
     assert response_body[0]["description"] == "test event UPDATED"
+
+
+def test_user_suggestions():
+    URL = USER_SUGGESTIONS_URL.format(USER_UUID)
+    request = requests.get(
+        URL,
+        headers=VALID_HEADERS,
+        verify=False,
+    )
+    response_body = json.loads(request.text)
+
+    assert request.status_code == 200
+    assert len(response_body) == 0
 
 
 def test_event_share():

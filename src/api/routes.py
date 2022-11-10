@@ -2,6 +2,7 @@ import json
 import uuid
 import ssl
 import smtplib
+import urllib.parse
 from email.message import EmailMessage
 from flask import jsonify, request
 from api.models import *
@@ -21,7 +22,7 @@ from api import (
     EMAIL_PASSWORD,
     APPLICATION_URL,
 )
-from sqlalchemy import func
+from sqlalchemy import func, and_
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from marshmallow import ValidationError
@@ -226,7 +227,7 @@ def user_login():
     user["username"] = user["username"].lower()
 
     login_user = (
-        db.session.query(User).filter_by(username=user["username"]).one_or_none()
+        db.session.query(User).filter_by(username=user["username"], canceled=0).one_or_none()
     )
 
     if not login_user:
@@ -267,7 +268,7 @@ def get_user_registration(id: str):
     Get the registered events of the specified user.
 
     Args:
-        id: the id of the user to get the favorites of
+        id: the id of the user to get the registrations of
 
     Returns:
         a list of event data, status code, content type
@@ -282,6 +283,55 @@ def get_user_registration(id: str):
     return events_schema.dump(events), 200, CONTENT_TYPE
 
 
+@app.route("/users/<id>/suggestion", methods=["GET"])
+def get_user_suggestions(id: str):
+    """
+    Get the suggested events of the specified user.
+
+    Args:
+        id: the id of the user to get the favorites of
+
+    Returns:
+        a list of event data, status code, content type
+    """
+
+    # Get registered events
+    registration = (
+        db.session.query(EventRegistration.event_id)
+        .filter_by(user_id=id, canceled=0)
+        .all()
+    )
+    registrations = [result[0] for result in registration]
+    registered_events = (
+        db.session.query(Event).filter(Event.id.in_(registrations)).all()
+    )
+
+    # Get favorite events
+    favorite = (
+        db.session.query(EventFavorite.event_id).filter_by(user_id=id, canceled=0).all()
+    )
+    favorites = [result[0] for result in favorite]
+    favorite_events = db.session.query(Event).filter(Event.id.in_(favorites)).all()
+
+    # Setup query data
+    # Get all current categories
+    all_events = registered_events + favorite_events
+    categories = [event.category for event in all_events]
+
+    # Get Ids to ignore
+    # events the user already knows about should not be suggested to them
+    ids_to_ignore = registrations + favorites
+
+    # Get Suggested Events
+    events = (
+        db.session.query(Event)
+        .filter(and_(Event.id.notin_(ids_to_ignore), Event.category.in_(categories)))
+        .all()
+    )
+
+    return events_schema.dump(events), 200, CONTENT_TYPE
+
+
 @app.route("/events", methods=["GET"])
 def get_events():
     """
@@ -291,7 +341,8 @@ def get_events():
         a list of event data, status code, content type
     """
     events = db.session.query(Event).filter(Event.canceled == 0).all()
-    return events_schema.dump(events), 200, CONTENT_TYPE
+    sorted_events = sorted(events, key=lambda event: event.start_time)
+    return events_schema.dump(sorted_events), 200, CONTENT_TYPE
 
 
 @app.route("/events", methods=["POST"])
@@ -638,7 +689,7 @@ def event_share():
         Location: {event.location}
         Cost: {event.cost}\n
 
-        If you are interested, come to {APPLICATION_URL} and search for the event above.
+        If you are interested, come to {urllib.parse.urlparse(APPLICATION_URL).netloc} and search for the event above.
         We look forward to seeing you!
 
         Kindly,

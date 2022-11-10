@@ -1,5 +1,5 @@
 ![isea tests](https://github.com/team-3-cs633/isea-backend/actions/workflows/testing.yml/badge.svg)
-![](https://img.shields.io/badge/coverage-71%25-orange)
+![](https://img.shields.io/badge/coverage-70%25-orange)
 
 
 # isea-backend
@@ -27,7 +27,7 @@ Run `python3 -m pytest`
 Before creating a pull request run `pipenv run black .` to format the repository
 
 ## Table Diagram
-![Table Diagram](table_diagram.png)
+![Table Diagram](./img/table_diagram.png)
 
 ## Endpoints
 **Users**   
@@ -37,6 +37,7 @@ Before creating a pull request run `pipenv run black .` to format the repository
 → **/users/{id} GET** : Get a user    
 → **/users/{id}/favorite GET** : Get a users favorite events    
 → **/users/{id}/registration GET** : Get a users event registrations    
+→ **/users/{id}/suggestion GET** : Get a users event suggestions   
 → **/users/login POST** : Login a user    
 → **/users/roles GET** : Get user roles   
 → **/users/roles POST** : Create a user role    
