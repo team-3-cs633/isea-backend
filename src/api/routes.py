@@ -227,7 +227,9 @@ def user_login():
     user["username"] = user["username"].lower()
 
     login_user = (
-        db.session.query(User).filter_by(username=user["username"], canceled=0).one_or_none()
+        db.session.query(User)
+        .filter_by(username=user["username"], canceled=0)
+        .one_or_none()
     )
 
     if not login_user:
@@ -258,7 +260,11 @@ def get_user_favorites(id: str):
         db.session.query(EventFavorite.event_id).filter_by(user_id=id, canceled=0).all()
     )
     favorites = [result[0] for result in favorite]
-    events = db.session.query(Event).filter(Event.id.in_(favorites)).all()
+    events = (
+        db.session.query(Event)
+        .filter(and_(Event.id.in_(favorites), Event.canceled == 0))
+        .all()
+    )
     return events_schema.dump(events), 200, CONTENT_TYPE
 
 
@@ -279,7 +285,11 @@ def get_user_registration(id: str):
         .all()
     )
     registrations = [result[0] for result in registration]
-    events = db.session.query(Event).filter(Event.id.in_(registrations)).all()
+    events = (
+        db.session.query(Event)
+        .filter(and_(Event.id.in_(registrations), Event.canceled == 0))
+        .all()
+    )
     return events_schema.dump(events), 200, CONTENT_TYPE
 
 
@@ -325,7 +335,13 @@ def get_user_suggestions(id: str):
     # Get Suggested Events
     events = (
         db.session.query(Event)
-        .filter(and_(Event.id.notin_(ids_to_ignore), Event.category.in_(categories)))
+        .filter(
+            and_(
+                Event.id.notin_(ids_to_ignore),
+                Event.category.in_(categories),
+                Event.canceled == 0,
+            )
+        )
         .all()
     )
 
