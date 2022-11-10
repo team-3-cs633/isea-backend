@@ -1,8 +1,7 @@
-from api import app, local_environment
+from api import app
 
 
 if __name__ == "__main__":
-    if local_environment:
-        app.run(debug=True, port=5555)
-    else:
-        app.run(host="0.0.0.0", port=5555)
+    app.run(
+        host="0.0.0.0", port=5555, ssl_context=("./.certs/cert.pem", "./.certs/key.pem")
+    )
